@@ -1,0 +1,14 @@
+.title {
+  color: red;
+  font-weight: bold;
+  user-select: none;
+  background: #11111111;
+  display: flex;
+}
+
+.bg {
+  width: 200px;
+  height: 400px;
+  background: url(../assets/images/duanwu.png) center no-repeat;
+  background-size: contain;
+}
