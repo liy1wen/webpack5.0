@@ -1,14 +1,17 @@
 const path = require('path');
 
 const {
-  DefinePlugin
+  DefinePlugin,BannerPlugin
 } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const {
   CleanWebpackPlugin
 } = require('clean-webpack-plugin');
-
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader/dist/index')
 module.exports = {
   entry: './src/main.js',
   output: {
@@ -19,7 +22,8 @@ module.exports = {
     rules: [{
         test: /\.css$/,
         use: [
-          'style-loader',
+          // 'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
           'postcss-loader',
           //   {
@@ -34,7 +38,7 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        use: ['style-loader', 'css-loader', 'less-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader','less-loader'],
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
@@ -46,24 +50,29 @@ module.exports = {
           },
         },
       },
-      // {
-      //   test: /\.(png|jpe?g|gif)$/i,
-      //   use: {
-      //     loader: 'file-loader',
-      //     options: {},
-      //   },
-      // },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
     ],
   },
   plugins: [
+    // 创建打包后的入口html文件
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './public/index.html',
       title: 'demo-webpack',
     }),
+    // 申明全局变量
     new DefinePlugin({
       BASE_URL: "'./'",
     }),
+    // 复制已有文件到新的目录下
     new CopyPlugin({
       patterns: [{
         from: './public',
@@ -73,6 +82,20 @@ module.exports = {
         },
       }, ],
     }),
+    // 打包自动删除旧的包文件
     new CleanWebpackPlugin(),
+    // 提取css到单独文件
+    new MiniCssExtractPlugin({ filename: '[name]-[hash:6].css' }),
+    // 压缩css
+    new OptimizeCssAssetsPlugin(),
+    // 生成的块的顶部添加一个横幅
+    new BannerPlugin({ banner: 'leeyiwen', }),
+    // eslint规范
+    new ESLintPlugin({
+      fix: true,//自动解决常规代码格式报错
+      extensions: ['js', 'json', 'coffee'],
+      exclude: '/node_modules/'
+    }),
+    new VueLoaderPlugin()
   ],
 };

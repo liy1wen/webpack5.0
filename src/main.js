@@ -1,7 +1,6 @@
-import {
-    sum
-} from './js/sum'
-import './styles/index.css'
-import './styles/index.less'
-// import './js/el'
-console.log(sum(2, 59));
+import { createApp } from 'vue/dist/vue.esm-bundler';
+import App from './App.vue';
+import './styles/index.less';
+// import './styles/index.less';
+
+createApp(App).mount('#app');
