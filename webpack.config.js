@@ -1,7 +1,8 @@
 const path = require('path');
 
 const {
-  DefinePlugin,BannerPlugin
+  DefinePlugin,
+  BannerPlugin
 } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -11,7 +12,9 @@ const {
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const { VueLoaderPlugin } = require('vue-loader/dist/index')
+const {
+  VueLoaderPlugin
+} = require('vue-loader/dist/index')
 module.exports = {
   entry: './src/main.js',
   output: {
@@ -38,15 +41,20 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader','less-loader'],
+        use: [{
+          loader: MiniCssExtractPlugin.loader,
+          options: {
+            publicPath: '../'
+          }
+        }, 'css-loader', 'postcss-loader', 'less-loader'],
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
         use: {
           loader: 'url-loader',
           options: {
-            limit: 10240,
-            name: 'img/[name]-[hash:6].[ext]',
+            limit: 10 * 1024,
+            name: 'img/[name]-[hash:6].[ext]'
           },
         },
       },
@@ -85,14 +93,18 @@ module.exports = {
     // 打包自动删除旧的包文件
     new CleanWebpackPlugin(),
     // 提取css到单独文件
-    new MiniCssExtractPlugin({ filename: '[name]-[hash:6].css' }),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name]-[hash:6].css'
+    }),
     // 压缩css
     new OptimizeCssAssetsPlugin(),
     // 生成的块的顶部添加一个横幅
-    new BannerPlugin({ banner: 'leeyiwen', }),
+    new BannerPlugin({
+      banner: 'leeyiwen',
+    }),
     // eslint规范
     new ESLintPlugin({
-      fix: true,//自动解决常规代码格式报错
+      fix: true, //自动解决常规代码格式报错
       extensions: ['js', 'json', 'coffee'],
       exclude: '/node_modules/'
     }),
